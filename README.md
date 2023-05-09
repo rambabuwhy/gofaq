@@ -1,4 +1,4 @@
-# Page 1
+# faq-1
 
 1. What are the key features of Go? How does it differ from other programming languages?
 
@@ -98,5 +98,79 @@ func say(s string) {
 func main() {
     go say("world")
     say("hello")
+}
+```
+
+4. How does Go manage memory? What are some best practices for memory management in Go?
+
+Go uses garbage collection to manage memory, which means that the runtime automatically deallocates memory that is no longer in use by the program. This helps prevent memory leaks and other memory-related errors.
+
+Some best practices for memory management in Go include:
+
+* Use value types instead of pointers when possible to avoid unnecessary allocation and deallocation of memory
+* Avoid creating unnecessary Goroutines, channels, and other concurrent constructs that can consume memory and reduce performance
+* Use sync.Pool to reuse memory instead of allocating and deallocating it repeatedly
+
+Example code snippet:
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    var pool = sync.Pool{
+        New: func() interface{} {
+            return make([]byte, 1024)
+        },
+    }
+
+    buffer := pool.Get().([]byte)
+    defer pool.Put(buffer)
+
+    copy(buffer, "hello, world!")
+    fmt.Println(string(buffer))
+}
+```
+
+5. How does Go support functional programming? What are some key features of Go that make it suitable for functional programming?
+
+Go supports functional programming through its support for higher-order functions, closures, and first-class functions. Go also has some built-in functions, such as map, reduce, and filter, that are commonly used in functional programming.
+
+Some key features of Go that make it suitable for functional programming include:
+
+* Its support for closures and first-class functions, which allow functions to be passed as arguments and returned as results from other functions
+* Its support for immutable data structures, such as arrays and maps
+* Its built-in support for anonymous functions, which can be used to create function literals
+* Its support for interfaces, which can be used to create generic functions
+
+Example code snippet:
+
+```go
+package main
+
+import "fmt"
+
+type Mapper func(int) int
+
+func mapInts(a []int, f Mapper) []int {
+    b := make([]int, len(a))
+    for i, v := range a {
+        b[i] = f(v)
+    }
+    return b
+}
+
+func main() {
+    a := []int{1, 2, 3, 4, 5}
+
+    b := mapInts(a, func(x int) int {
+        return x * 2
+    })
+
+    fmt.Println(b)
 }
 ```
