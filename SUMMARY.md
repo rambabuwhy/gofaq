@@ -1,4 +1,5 @@
 # Table of contents
 
-* [faq-1](README.md)
+* [cover](README.md)
+* [faq-1](faq-1.md)
 * [faq-2](faq-2.md)
