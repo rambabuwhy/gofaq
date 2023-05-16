@@ -7,3 +7,4 @@
 * [faq-4](faq-4.md)
 * [faq-5](faq-5.md)
 * [faq-6](faq-6.md)
+* [faq-7](faq-7.md)
