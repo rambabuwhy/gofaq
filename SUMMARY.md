@@ -9,3 +9,5 @@
 * [faq-6](faq-6.md)
 * [faq-7](faq-7.md)
 * [faq-8](faq-8.md)
+* [faq-9](faq-9.md)
+* [faq-10](faq-10.md)
