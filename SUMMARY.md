@@ -1,6 +1,18 @@
 # Table of contents
 
 * [cover](README.md)
+* [Basics of Go Language](basics-of-go-language.md)
+* [Go Syntax and Data Types](go-syntax-and-data-types.md)
+* [Control Flow and Functions](control-flow-and-functions.md)
+* [Data Structures and Collections](data-structures-and-collections.md)
+* [Error Handling](error-handling.md)
+* [Concurrency and Goroutines](concurrency-and-goroutines.md)
+* [Packages and Modules](packages-and-modules.md)
+* [Testing and Debugging](testing-and-debugging.md)
+* [File I/O and Networking](file-i-o-and-networking.md)
+* [Advanced Topics](advanced-topics.md)
+* [Best Practices and Coding Guidelines](best-practices-and-coding-guidelines.md)
+* [Popular Go Libraries and Frameworks](popular-go-libraries-and-frameworks.md)
 * [faq-1](faq-1.md)
 * [faq-2](faq-2.md)
 * [faq-3](faq-3.md)
