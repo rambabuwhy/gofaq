@@ -45,7 +45,11 @@ func main() {
 
 2. Explain the difference between a Goroutine and a thread. How do Goroutines achieve concurrency?
 
-A Goroutine is a lightweight thread of execution that is managed by the Go runtime. Goroutines are similar to threads in that they can execute concurrently with other Goroutines, but they are different in several ways:
+Goroutines are lightweight threads of execution in Go that are managed by the Go runtime. Goroutines are more efficient than threads because they have a smaller memory footprint and can be created and destroyed more quickly. Goroutines are also designed to communicate with each other using channels, which provide a way for Goroutines to safely share data without the need for locks or other synchronization primitives.
+
+In contrast, threads are managed by the operating system and have a larger memory footprint than Goroutines. Threads also require locks or other synchronization primitives to safely share data between threads.
+
+Goroutines are similar to threads in that they can execute concurrently with other Goroutines, but they are different in several ways:
 
 * Goroutines are managed by the Go runtime and are more lightweight than threads
 * Goroutines have a much smaller stack size than threads, so many more Goroutines can be created than threads
