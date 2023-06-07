@@ -118,3 +118,158 @@ func main() {
 ```
 
 In this example, a set of integers is processed concurrently in Goroutines. The `process` function performs some computation on each integer and sends the result back through the `result` channel. If the data value is too large, an error is sent through the `errChan`. The main Goroutine waits for all Goroutines to finish using a `sync.WaitGroup` and collects the results and errors through separate channels. Finally, the results and errors are printed accordingly.
+
+3. What is the difference between defer and panic in Go? When and how should they be used?
+
+In Go, `defer` and `panic` are two distinct mechanisms used for different purposes:
+
+* `defer` is used to schedule a function call to be executed when the surrounding function returns, whether normally or due to a panic. It is commonly used for tasks like resource cleanup, unlocking mutexes, or closing files.
+* `panic` is used to trigger a runtime exception, usually indicating an unrecoverable error condition. When a panic occurs, the normal execution flow of the program is halted, and the program starts unwinding the stack, executing any deferred functions along the way until it reaches a recover function or terminates.
+
+Best practices for using `defer` and `panic` include:
+
+* Use `defer` to ensure that critical cleanup tasks are always executed, regardless of how the function exits.
+* Use `panic` sparingly and only for exceptional situations where the program cannot continue safely.
+* Use `recover` to catch and handle panics gracefully within a deferred function, allowing the program to continue execution.
+* Avoid using `panic` as a regular control flow mechanism, as it can make code harder to understand and maintain.
+
+Example code snippet:
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func cleanup() {
+	fmt.Println("Cleanup task")
+}
+
+func process() {
+	defer cleanup()
+
+	fmt.Println("Processing task")
+	panic("Something went wrong!")
+}
+
+func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered:", r)
+		}
+	}()
+
+	process()
+
+	fmt.Println("Program continues execution")
+}
+```
+
+In this example, the `cleanup` function is scheduled using `defer` to ensure it is called regardless of how the `process` function exits. Inside the `process` function, a panic is triggered with a custom error message. However, the program continues execution after recovering from the panic using the `recover` function. This allows graceful error handling and prevents the program from terminating abruptly.
+
+4. How does error handling work in Go? What are some best practices for error handling in Go?
+
+In Go, error handling is done using explicit error return values. Functions that can potentially produce an error return an additional value of type `error`. It is a common practice in Go to check the returned error value and handle it appropriately.
+
+Here are some best practices for error handling in Go:
+
+* Check errors: Always check the returned error value and handle it appropriately. Ignoring errors can lead to unexpected behavior or bugs.
+* Use named return values for errors: When declaring a function, consider using named return values for errors to provide better clarity in the function signature and make error handling code more readable.
+* Use `errors.New` or `fmt.Errorf` for custom errors: For custom errors, use the `errors.New` function or `fmt.Errorf` to create error values with meaningful error messages. Include relevant information to aid in debugging and troubleshooting.
+* Avoid sentinel errors: Sentinel errors are specific values returned to indicate certain conditions. Instead, use unique error values or define custom error types to convey distinct errors.
+* Wrap errors with context: When propagating errors, wrap them with additional context using the `fmt.Errorf` function or third-party packages like `pkg/errors` or `github.com/pkg/errors`. This provides more information about the error's origin and helps with debugging.
+* Handle errors at an appropriate level: Handle errors at a level where you have the necessary context to make an informed decision. This might involve handling errors at a higher level in the call stack or logging errors for later analysis.
+
+Example code snippet:
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	"log"
+	"os"
+)
+
+func readData() ([]byte, error) {
+	file, err := os.Open("data.txt")
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	data := make([]byte, 1024)
+	_, err = file.Read(data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read data: %w", err)
+	}
+
+	return data, nil
+}
+
+func process() error {
+	data, err := readData()
+	if err != nil {
+		return fmt.Errorf("failed to process data: %w", err)
+	}
+
+	// Process the data
+
+	return nil
+}
+
+func main() {
+	err := process()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
+In this example, the `readData` function attempts to open a file and read data from it. If any error occurs, it is wrapped with additional context using `fmt.Errorf`. The `process` function calls `readData` and wraps any error returned from it. Finally, in the `main` function, the error is checked, and if it exists, it is logged using `log.Fatal`. By consistently checking and handling errors, you can ensure proper error management in your Go programs.
+
+5. How can you handle timeouts in Go? Explain the concept of a context and how it can be used for timeout management.
+
+In Go, timeouts can be handled using the concept of a context. The `context` package provides a powerful mechanism to manage cancellation and timeouts across Goroutines.
+
+A context represents the context in which a Goroutine is executing and carries information about deadlines, cancellation signals, and other request-scoped values. It allows for the propagation of cancellation signals and timeouts across the Goroutine tree.
+
+Here's an example of handling timeouts using a context:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"time"
+)
+
+func processWithTimeout() {
+	// Create a context with a timeout of 2 seconds
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	// Perform some work
+	select {
+	case <-time.After(3 * time.Second):
+		fmt.Println("Work completed")
+	case <-ctx.Done():
+		fmt.Println("Timeout occurred:", ctx.Err())
+	}
+}
+
+func main() {
+	processWithTimeout()
+}
+```
+
+In this example, the `context.WithTimeout` function is used to create a new context with a timeout of 2 seconds. The `context.Background()` function is used to create the root context. The `cancel` function returned by `context.WithTimeout` is deferred to ensure it is called when the Goroutine finishes.
+
+Inside the Goroutine, the work is simulated using a `select` statement. The `time.After` function is used to wait for 3 seconds, representing the work being completed. The `ctx.Done()` channel is also included in the `select` statement. If the context's deadline is exceeded, the `ctx.Done()` channel is closed, indicating a timeout occurred.
+
+By utilizing a context with a timeout, you can ensure that operations complete within a specific time frame and handle timeouts gracefully.
+
+It's worth noting that the use of contexts is not limited to timeouts. Contexts can be used for various purposes, including request cancellation, deadline propagation, and carrying request-scoped values across Goroutines.
