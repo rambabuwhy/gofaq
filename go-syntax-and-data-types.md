@@ -129,3 +129,49 @@ func main() {
     // Output: 50
 }
 ```
+
+8. What is a variadic function in Go? How is it used? Can you provide an example of how you might use a variadic function in your code?
+
+* A variadic function is a function that can accept a variable number of arguments of the same type. Variadic functions are invoked by passing multiple arguments of the specified type, or by passing a slice of the specified type with the `...` ellipsis notation.
+
+Example Go code snippet:
+
+```go
+func sum(nums ...int) int {
+    total := 0
+    for _, num := range nums {
+        total += num
+    }
+    return total
+}
+
+func main() {
+    result := sum(1, 2, 3, 4, 5)   // Output: 15
+    fmt.Println(result)
+}
+```
+
+9. What is a type in Go? How are types defined and used in Go?
+
+* A type in Go is a description of the nature and properties of a value. Types can be basic types (e.g., int, string), composite types (e.g., struct, array), or user-defined types. Types are defined using type declarations and can be used to create variables, function signatures, or struct fields.
+
+Example Go code snippet:
+
+```go
+type Person struct {
+    Name string
+    Age  int
+}
+
+func main() {
+    var x int       // basic type
+    var s string    // basic type
+    var arr [3]int  // array type
+    var p Person    // user-defined type
+
+    fmt.Println(x)    // Output: 0
+    fmt.Println(s)    // Output: ""
+    fmt.Println(arr)  // Output: [0 0 0]
+    fmt.Println(p)    // Output: { 0}
+}
+```

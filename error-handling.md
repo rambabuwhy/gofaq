@@ -119,54 +119,43 @@ func main() {
 
 In this example, a set of integers is processed concurrently in Goroutines. The `process` function performs some computation on each integer and sends the result back through the `result` channel. If the data value is too large, an error is sent through the `errChan`. The main Goroutine waits for all Goroutines to finish using a `sync.WaitGroup` and collects the results and errors through separate channels. Finally, the results and errors are printed accordingly.
 
-3. What is the difference between defer and panic in Go? When and how should they be used?
+3. Explain the defer, panic, and recover mechanism in Go. When and how would you use them in your code?
 
-In Go, `defer` and `panic` are two distinct mechanisms used for different purposes:
+the `defer`, `panic`, and `recover` mechanism in Go. These are essential constructs for error handling and control flow in Go.
 
-* `defer` is used to schedule a function call to be executed when the surrounding function returns, whether normally or due to a panic. It is commonly used for tasks like resource cleanup, unlocking mutexes, or closing files.
-* `panic` is used to trigger a runtime exception, usually indicating an unrecoverable error condition. When a panic occurs, the normal execution flow of the program is halted, and the program starts unwinding the stack, executing any deferred functions along the way until it reaches a recover function or terminates.
+In Go, the `defer` statement is used to schedule a function call to be executed when the surrounding function or method returns. It allows you to postpone the execution of a function until the current function completes, regardless of whether it returns normally or panics.
 
-Best practices for using `defer` and `panic` include:
+The `panic` statement is used to trigger a runtime panic, indicating that something unexpected or unrecoverable has occurred in the program. It halts the normal execution flow and starts unwinding the stack, which means it starts to unravel function calls until it reaches a `recover` statement or the program terminates.
 
-* Use `defer` to ensure that critical cleanup tasks are always executed, regardless of how the function exits.
-* Use `panic` sparingly and only for exceptional situations where the program cannot continue safely.
-* Use `recover` to catch and handle panics gracefully within a deferred function, allowing the program to continue execution.
-* Avoid using `panic` as a regular control flow mechanism, as it can make code harder to understand and maintain.
+The `recover` function is used to regain control of a panicked goroutine. It is typically called within a deferred function and is used to catch and handle panics, allowing the program to gracefully recover from a panic and resume normal execution.
 
-Example code snippet:
+Here's an example that demonstrates the usage of `defer`, `panic`, and `recover`:
 
 ```go
 package main
 
-import (
-	"fmt"
-)
-
-func cleanup() {
-	fmt.Println("Cleanup task")
-}
-
-func process() {
-	defer cleanup()
-
-	fmt.Println("Processing task")
-	panic("Something went wrong!")
-}
+import "fmt"
 
 func main() {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Println("Recovered:", r)
-		}
-	}()
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Println("Recovered from panic:", r)
+        }
+    }()
 
-	process()
-
-	fmt.Println("Program continues execution")
+    fmt.Println("Before panic")
+    panic("Something went wrong!")
+    fmt.Println("After panic") // This line will not be executed
 }
 ```
 
-In this example, the `cleanup` function is scheduled using `defer` to ensure it is called regardless of how the `process` function exits. Inside the `process` function, a panic is triggered with a custom error message. However, the program continues execution after recovering from the panic using the `recover` function. This allows graceful error handling and prevents the program from terminating abruptly.
+In this example, we have a `defer` statement that schedules an anonymous function to be executed when the `main` function returns. This anonymous function checks if there was a panic using `recover()`. If a panic occurred, it prints the recovered value. Otherwise, it does nothing.
+
+Inside the `main` function, we first print "Before panic". Then, we intentionally trigger a panic using `panic("Something went wrong!")`. This will immediately halt the normal execution flow and jump to the deferred function. The panicked value is caught by the `recover` function, and the message "Recovered from panic: Something went wrong!" is printed. The program continues to execute from there and completes.
+
+It's important to note that the `recover` function can only catch panics within the same goroutine and within a deferred function. It cannot recover panics across goroutines or if called in a non-deferred function.
+
+The `defer`, `panic`, and `recover` mechanism is useful for handling unexpected errors or exceptional conditions in Go code. However, it should be used judiciously, and it's generally recommended to prefer explicit error handling instead of relying too heavily on panics and recover.
 
 4. How does error handling work in Go? What are some best practices for error handling in Go?
 
@@ -273,3 +262,32 @@ Inside the Goroutine, the work is simulated using a `select` statement. The `tim
 By utilizing a context with a timeout, you can ensure that operations complete within a specific time frame and handle timeouts gracefully.
 
 It's worth noting that the use of contexts is not limited to timeouts. Contexts can be used for various purposes, including request cancellation, deadline propagation, and carrying request-scoped values across Goroutines.
+
+6. How does Go handle type assertions and type switches? Can you provide an example of how you might use type assertions or type switches in your code?
+
+* Type assertions and type switches are used to inspect and work with values of interface type. Type assertions allow you to extract the underlying concrete type, while type switches enable conditional handling based on the underlying type.
+
+Example Go code snippet with type assertion:
+
+```go
+var val interface{} = "Hello"
+str, ok := val.(string)
+if ok {
+    fmt.Println("String:", str)
+}
+```
+
+Example Go code snippet with type switch:
+
+```go
+func process(val interface{}) {
+    switch v := val.(type) {
+    case string:
+        fmt.Println("String:", v)
+    case int:
+        fmt.Println("Int:", v)
+    default:
+        fmt.Println("Unknown type")
+    }
+}
+```

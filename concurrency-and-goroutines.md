@@ -224,3 +224,63 @@ func main() {
     fmt.Println(counter)  // Output: 1000
 }
 ```
+
+6. How does Go handle concurrent access to shared resources? Can you explain the concept of a mutex and how it can be used to protect critical sections of code?
+
+Let's discuss how Go handles concurrent access to shared resources using a mutex. Here's an example code snippet that demonstrates the usage of a mutex in Go:
+
+```go
+goCopy codepackage main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+var (
+	counter = 0
+	mutex   sync.Mutex
+	wg      sync.WaitGroup
+)
+
+func incrementCounter() {
+	defer wg.Done()
+
+	// Lock the mutex to ensure exclusive access to the shared resource
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	// Simulate some work
+	time.Sleep(time.Millisecond * 100)
+
+	// Update the shared resource
+	counter++
+}
+
+func main() {
+	// Spawn multiple goroutines to increment the counter concurrently
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go incrementCounter()
+	}
+
+	// Wait for all goroutines to finish
+	wg.Wait()
+
+	// Print the final value of the counter
+	fmt.Println("Counter:", counter)
+}
+```
+
+In the above code, we have a shared resource called `counter` which is being accessed concurrently by multiple goroutines. To ensure exclusive access, we use a `sync.Mutex` called `mutex`. Here's how it works:
+
+1. We create a mutex variable `mutex` using `sync.Mutex`.
+2. Inside the `incrementCounter` function, we first call `mutex.Lock()` to acquire the lock on the mutex, ensuring exclusive access to the critical section of code.
+3. We defer `mutex.Unlock()` to release the lock on the mutex when the function execution completes, regardless of whether it returns normally or encounters an error.
+4. Within the critical section, we simulate some work by sleeping for a short duration to emphasize concurrent access.
+5. We update the shared resource `counter` by incrementing its value.
+6. Finally, in the `main` function, we spawn multiple goroutines to execute the `incrementCounter` function concurrently.
+7. We use `wg.Wait()` to wait for all the goroutines to complete before printing the final value of the `counter`.
+
+By utilizing the mutex, we ensure that only one goroutine can enter the critical section at a time, preventing race conditions and guaranteeing consistent updates to the shared resource.
