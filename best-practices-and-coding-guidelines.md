@@ -147,3 +147,37 @@ Run the program: To run the program, simply type the name of the executable file
 This will output `Hello, World!` to the terminal.
 
 That’s it! You’ve successfully created a Go project. You can continue to add more Go files to your project, and Go will automatically manage the dependencies between them through the `go.mod` file.o
+
+4. Understanding  GO111MODULE
+
+GO111MODULE is a setting in Go programming language that controls the behavior of Go modules, which is a feature added in Go version 1.11 to help manage dependencies in Go projects.
+
+Before the introduction of Go modules, Go relied on the GOPATH environment variable to manage dependencies. In this model, all Go packages and their dependencies were stored in a single directory called GOPATH. This approach was simple, but it led to several problems, including version conflicts, the need to manually manage dependencies, and difficulties in sharing code.
+
+Go modules were introduced to address these issues and provide a better way to manage dependencies. A module is a collection of Go packages that are versioned together, with a specific version defined by a unique module path and a semantic version number.
+
+When a Go project is initialized with go mod init, it creates a go.mod file that specifies the project’s dependencies and their versions. The go.mod file is then used to download and manage the dependencies when building the project.
+
+Modules are identified by a module path: A module path is a unique identifier for a module that consists of a domain name and a module name. For example, `github.com/golang/go` is the module path for the Go standard library. When you import a package in your project, the module system uses the module path to locate the package and its dependencies.
+
+`GO111MODULE` is an environment variable that controls the behavior of the Go module system. The Go module system is a feature introduced in Go version 1.11 to manage dependencies and versioning of packages in a Go project.
+
+The `GO111MODULE` environment variable has three possible values:
+
+1. `GO111MODULE=off`: This value disables the Go module system and uses the legacy GOPATH mode instead. In this mode, dependencies are downloaded and stored in the GOPATH directory, and the `go` command looks for packages in the directories specified by the GOPATH environment variable.
+2. `GO111MODULE=on`: This value enables the Go module system and uses modules to manage dependencies. In this mode, the `go` command looks for the `go.mod` file in the project directory to determine the required dependencies and their versions. If the file exists, the command downloads the required dependencies and stores them in a local cache, which can be shared between projects.
+3. `GO111MODULE=auto`: This value enables the Go module system if a `go.mod` file is present in the project directory. If no `go.mod` file is found, the legacy GOPATH mode is used.
+
+GO111MODULE is usually set as an environment variable before running the Go command. For example, you can set it as follows:
+
+```
+export GO111MODULE=on
+```
+
+Or, you can set it only for a specific command:
+
+```
+GO111MODULE=on go build
+```
+
+Using the Go module system allows developers to manage their project dependencies in a more organized and efficient way. By specifying the required packages and versions in the `go.mod` file, the module system ensures that the project can be built consistently across different environments.
