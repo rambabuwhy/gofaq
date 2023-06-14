@@ -39,7 +39,7 @@ It's worth noting that the `init()` function is commonly used for setting up var
 
 Here’s a basic Makefile you can use to compile your `main.go` file:
 
-```
+```makefile
 # Makefile for compiling main.go
 
 # Compiler settings
@@ -89,3 +89,61 @@ This rule says that the `$(TARGET)` target depends on all the Go source files (`
 * `$(GOFLAGS)` expands to the compiler flags we want to use (`-v` in this case, which tells the compiler to be verbose).
 * `-o $@` specifies the name of the output file (`$@` expands to the name of the target, which is `$(TARGET)` or `main` in this case).
 * `$^` expands to all the dependencies of the target (`*.go` in this case), which tells the compiler to compile all the Go source files into the executable.
+
+3. Step-by-step instructions to create a Go project
+
+Install Go: Before starting, you need to have Go installed on your system. You can download and install Go from the official Go website ([https://golang.org/dl/](https://golang.org/dl/)).
+
+Create a project directory: Open your terminal or command prompt and create a project directory by running the following command:
+
+```
+mkdir myproject
+```
+
+Set up the Go workspace: Go has a specific workspace structure for projects. The workspace is a directory hierarchy with three directories at its root: `src`, `pkg`, and `bin`. To set up the workspace, you need to set the `GOPATH` environment variable to the path of the project directory you just created. For example, if your project directory is located at `~/go/src/myproject`, you can set the `GOPATH` variable like this:
+
+```
+export GOPATH=~/go
+```
+
+Create a Go module: A Go module is a collection of Go packages that are versioned together. To create a new module, navigate to your project directory and run the following command:
+
+```
+go mod init example.com/myproject
+```
+
+Replace `example.com` with your domain or any other unique identifier.
+
+Create a Go file: Inside your project directory, create a new Go file with a `.go` extension. For example, you can create a file called `main.go` with the following command:
+
+```
+touch main.go
+```
+
+Write some Go code: Open the `main.go` file in your favorite text editor and write some Go code. Here's an example of a simple "Hello, World!" program:
+
+```go
+package main
+import "fmt"
+func main() {
+    fmt.Println("Hello, World!")
+}
+```
+
+Build the project: To build your Go project, run the following command in your project directory:
+
+```
+go build
+```
+
+This will compile your Go code and create an executable file in the current directory.
+
+Run the program: To run the program, simply type the name of the executable file:
+
+```
+./myproject
+```
+
+This will output `Hello, World!` to the terminal.
+
+That’s it! You’ve successfully created a Go project. You can continue to add more Go files to your project, and Go will automatically manage the dependencies between them through the `go.mod` file.o
